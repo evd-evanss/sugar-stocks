@@ -23,7 +23,8 @@ private val DarkColorScheme = darkColorScheme(
     onTertiary = TeaGreen,
     onPrimary = Dark01,
     surface = SurfaceDark,
-    background = BackgroundDark
+    background = BackgroundDark,
+    error = BloodLight
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -33,7 +34,8 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = TeaGreen,
     onPrimary = GrayLight,
     surface = SurfaceLight,
-    background = BackgroundLight
+    background = BackgroundLight,
+    surfaceVariant = SurfaceLight
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -53,7 +55,7 @@ fun DesignSystemTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val systemUiController = rememberSystemUiController()
+
     val colorScheme = when {
 //        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
 //            val context = LocalContext.current
@@ -63,14 +65,14 @@ fun DesignSystemTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-    systemUiController.setStatusBarColor(MaterialTheme.colorScheme.primary)
+
 
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+            window.statusBarColor = colorScheme.background.toArgb()
+            window.navigationBarColor = colorScheme.background.toArgb()
         }
     }
 

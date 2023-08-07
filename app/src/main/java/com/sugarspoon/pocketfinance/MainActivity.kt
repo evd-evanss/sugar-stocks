@@ -2,141 +2,127 @@ package com.sugarspoon.pocketfinance
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.tween
+import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.sugarspoon.design_system.Dimensions.inlineSpacingSmall
-import com.sugarspoon.design_system.Dimensions.stackSpacingMedium
-import com.sugarspoon.design_system.SugarTextField
 import com.sugarspoon.design_system.bottombar.BottomBar
-import com.sugarspoon.design_system.buttons.ButtonIcon
+import com.sugarspoon.design_system.buttons.MenuButton
+import com.sugarspoon.design_system.overlay.SugarDialog
 import com.sugarspoon.design_system.theme.DesignSystemTheme
-import com.sugarspoon.design_system.topbar.TopBar
 import com.sugarspoon.icons.generated.SugarSpoonIcons
-import com.sugarspoon.pocketfinance.anim.CircularReveal
 import com.sugarspoon.pocketfinance.navigation.Screens
-import com.sugarspoon.pocketfinance.navigation.homeScreen
+import com.sugarspoon.pocketfinance.navigation.navigation
+import com.sugarspoon.pocketfinance.ui.home.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    private val viewModel: HomeViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-            val tabSelected = remember { mutableStateOf(Screens.Home.name) }
-            val isDarkTheme = remember { mutableStateOf(true) }
+            val tabSelected = remember { mutableStateOf("") }
+            LaunchedEffect(true) {
+                tabSelected.value = "${Screens.Home.title}, item 1 de 3"
+                viewModel.getQuoteList()
+            }
+            val isVisible = remember {
+                mutableStateOf(false)
+            }
+            val stateStockScreen = viewModel.uiState.invoke()
+            DesignSystemTheme(darkTheme = true) {
 
-            CircularReveal(
-                targetState = isDarkTheme.value,
-                animationSpec = tween(2000)
-            ) { localTheme ->
-                DesignSystemTheme(darkTheme = localTheme) {
-                    Scaffold(
-                        modifier = Modifier.fillMaxSize(),
-                        bottomBar = {
-                            BottomBar(
-                                modifier = Modifier
-                                    .stackSpacingMedium()
-                                    .inlineSpacingSmall(),
-                                onSelectTab = {
-                                    tabSelected.value = it
-                                }
-                            ) {
-                                ButtonIcon(
-                                    modifier = Modifier,
-                                    icon = SugarSpoonIcons.Outline.Home,
-                                    tabName = Screens.Home.name,
-                                    selected = tabSelected.value == Screens.Home.name
-                                ) {
-                                    tabSelected.value = it
-                                    navController.navigate(Screens.Home.name)
-                                }
-                                ButtonIcon(
-                                    modifier = Modifier,
-                                    icon = SugarSpoonIcons.Outline.Presentation1,
-                                    tabName = Screens.Analysis.name,
-                                    selected = tabSelected.value == Screens.Analysis.name
-                                ) {
-                                    tabSelected.value = it
-                                    navController.navigate(Screens.Analysis.name)
-                                }
-                                ButtonIcon(
-                                    modifier = Modifier,
-                                    icon = SugarSpoonIcons.Outline.Wallet,
-                                    tabName = Screens.Wallet.name,
-                                    selected = tabSelected.value == Screens.Wallet.name
-                                ) {
-                                    tabSelected.value = it
-                                    navController.navigate(Screens.Wallet.name)
-                                }
-                                ButtonIcon(
-                                    modifier = Modifier,
-                                    icon = SugarSpoonIcons.Outline.User,
-                                    tabName = Screens.Profile.name,
-                                    selected = tabSelected.value == Screens.Profile.name
-                                ) {
-                                    tabSelected.value = it
-                                    navController.navigate(Screens.Profile.name)
-                                }
-                            }
-                        },
-                        topBar = {
-                            TopBar(
-                                modifier = Modifier,
-                                title = tabSelected.value,
-                                rightDescription = "Notificações",
-                                iconRight = if(localTheme) SugarSpoonIcons.Outline.Sun else SugarSpoonIcons.Outline.Moon,
-                                onClickRight = {
-                                    isDarkTheme.value = !isDarkTheme.value
-                                },
+                Box(Modifier.fillMaxSize()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                    ) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = Screens.Home.name
+                        ) {
+                            navigation(
+                                viewModel = viewModel,
+                                stateStockScreen = stateStockScreen
                             )
-                        },
-                        contentWindowInsets = WindowInsets.ime,
-                        content = { paddingValues ->
-                            paddingValues.apply {
-                                Box(
-                                    modifier = Modifier.fillMaxSize().padding(this)
-                                ) {
-                                    NavHost(
-                                        navController = navController,
-                                        startDestination = Screens.Home.name
-                                    ) {
-                                        homeScreen()
-                                    }
+                        }
+                    }
+                    BottomBar(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                    ) {
+                        MenuButton(
+                            modifier = Modifier,
+                            icon = SugarSpoonIcons.Outline.Home,
+                            tabName = "${Screens.Home.title}, item 1 de 3",
+                            isSelected = tabSelected.value == "${Screens.Home.title}, item 1 de 3",
+                        ) {
+                            tabSelected.value = it
+                            navController.navigate(Screens.Home.name) {
+                                popUpTo(navController.graph.id) {
+                                    inclusive = true
                                 }
                             }
                         }
-                    )
+                        MenuButton(
+                            modifier = Modifier,
+                            icon = SugarSpoonIcons.Outline.Note,
+                            tabName = "${Screens.Wallet.title}, item 2 de 3",
+                            isSelected = tabSelected.value == "${Screens.Wallet.title}, item 2 de 3",
+                        ) {
+                            tabSelected.value = it
+                            navController.navigate(Screens.Wallet.name) {
+                                popUpTo(navController.graph.id) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                        MenuButton(
+                            modifier = Modifier,
+                            icon = SugarSpoonIcons.Outline.Presentation1,
+                            tabName = "${Screens.Analysis.title}, item 3 de 3",
+                            isSelected = tabSelected.value == "${Screens.Analysis.title}, item 3 de 3"
+                        ) {
+                            tabSelected.value = it
+                            navController.navigate(Screens.Analysis.name) {
+                                popUpTo(navController.graph.id) {
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
+                    SugarDialog(
+                        isVisible = isVisible.value,
+                        title = "SAIR",
+                        message = "Você realmente deseja sair do App?",
+                        onClickRight = {
+                            finish()
+                        }
+                    ) {
+                        isVisible.value = false
+                    }
+                }
+                BackHandler(true) {
+                    isVisible.value = isVisible.value.not()
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TextPreview() {
-    SugarTextField(
-        value = "Oi",
-        hint = "Digite",
-        modifier = Modifier
-    ) {
-
     }
 }

@@ -1,5 +1,6 @@
 package com.sugarspoon.pocketfinance.base
 
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,12 +12,14 @@ abstract class BaseViewModelMVI<T : ScreeenState, in E : ScreenEvents>(initialVa
     val state: StateFlow<T>
         get() = _state
 
-    fun emitEvent(sideEffect: E) {
-        handleEvents(_state.value, sideEffect)
+    abstract val uiState: @Composable () -> T
+
+    fun emitEvent(vararg event: E) {
+        event.forEach { handleEvents(_state.value, it) }
     }
 
     fun createNewState(newState: T) {
-        val success = _state.tryEmit(newState)
+        _state.tryEmit(newState)
     }
 
     abstract fun handleEvents(oldState: T, sideEffect: E)

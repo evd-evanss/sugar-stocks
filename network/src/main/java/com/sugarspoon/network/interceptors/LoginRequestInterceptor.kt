@@ -18,7 +18,7 @@ class LoginRequestInterceptor  : Interceptor {
         //adding a header to the original request
         requestBuilder
             .addHeader("Content-Type", "application/json")
-            .addHeader("Authorization", "Basic TW1zVGQ3d2ZybkVrOjZrcTNDSk5KSmNMUA==")
+            .addHeader("Authorization", authorization.toBase64())
 
         val response = chain.proceed(requestBuilder.build())
 
@@ -26,8 +26,8 @@ class LoginRequestInterceptor  : Interceptor {
         return response
     }
 
-    private fun String.getBase64() : String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        "Basic ${java.util.Base64.getMimeDecoder().decode(this)}"
+    private fun String.toBase64() : String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        "Basic ${java.util.Base64.getMimeEncoder().encodeToString(this.toByteArray())}"
     } else {
         String(android.util.Base64.decode(this, Base64.DEFAULT)) // Unresolved reference: decode
     }

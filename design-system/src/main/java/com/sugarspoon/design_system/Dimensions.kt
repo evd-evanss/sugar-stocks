@@ -26,10 +26,23 @@ object Dimensions {
         )
     }
 
+    fun Modifier.endSpacingMedium() = composed {
+        padding(
+            end = SpacingMedium
+        )
+    }
+
     fun Modifier.inlineSpacingSmall() = composed {
         padding(
             start = SpacingSmall,
             end = SpacingSmall
+        )
+    }
+
+    fun Modifier.inlineSpacingVerySmall() = composed {
+        padding(
+            start = SpacingVerySmall,
+            end = SpacingVerySmall
         )
     }
 
@@ -46,16 +59,40 @@ object Dimensions {
         )
     }
 
+    fun Modifier.topSpacingSmall() = composed {
+        padding(
+            top = SpacingSmall
+        )
+    }
+
+    fun Modifier.topSpacingVerySmall() = composed {
+        padding(
+            top = SpacingVerySmall
+        )
+    }
+
     fun Modifier.bottomSpacing() = composed {
         padding(
             bottom = SpacingMedium,
         )
     }
 
+    fun Modifier.bottomSpacingVerySmall() = composed {
+        padding(
+            bottom = SpacingVerySmall,
+        )
+    }
+
     val CardShape = RoundedCornerShape(12.dp)
+    val ListItemShape = RoundedCornerShape(8.dp)
 
     // Elevation
     val Level1 = 2.dp
     val Level2 = 4.dp
     val Level3 = 6.dp
+
+    //Border
+    val BorderStrokeSmall = .5.dp
+    val BorderStrokeMedium = 1.dp
+    val BorderStrokeLarge = 2.dp
 }

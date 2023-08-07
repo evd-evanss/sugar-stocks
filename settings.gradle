@@ -3,6 +3,9 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+        maven {
+            url "https://jitpack.io"
+        }
     }
 }
 dependencyResolutionManagement {
@@ -10,12 +13,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url "https://jitpack.io"
+        }
     }
 }
-rootProject.name = "PocketFinance"
+rootProject.name = "Pocket Stocks"
 include ':app'
 include ':design-system'
 include ':icons'
 include ':network'
-include ':home'
 include ':data'

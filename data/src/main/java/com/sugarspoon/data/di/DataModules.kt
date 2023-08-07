@@ -1,7 +1,11 @@
 package com.sugarspoon.data.di
 
-import com.sugarspoon.data.repositories.FoundsRepository
-import com.sugarspoon.data.repositories.FoundsRepositoryImpl
+import com.sugarspoon.data.repositories.ApiRepository
+import com.sugarspoon.data.repositories.ApiRepositoryImpl
+import com.sugarspoon.data.repositories.LocalRepository
+import com.sugarspoon.data.repositories.LocalRepositoryImpl
+import com.sugarspoon.data.sources.LocalDataSource
+import com.sugarspoon.data.sources.LocalDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -10,7 +14,13 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn((SingletonComponent::class))
 abstract class DataModules {
-    
+
     @Binds
-    abstract fun bindsRepository(repository: FoundsRepositoryImpl): FoundsRepository
+    abstract fun bindsApiRepository(repository: ApiRepositoryImpl): ApiRepository
+
+    @Binds
+    abstract fun bindsLocalRepository(repository: LocalRepositoryImpl): LocalRepository
+
+    @Binds
+    abstract fun bindsLocalDataSource(dataSourceImpl: LocalDataSourceImpl): LocalDataSource
 }

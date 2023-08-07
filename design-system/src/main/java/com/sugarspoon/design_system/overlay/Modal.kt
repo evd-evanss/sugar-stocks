@@ -15,12 +15,16 @@ import androidx.compose.ui.window.DialogProperties
 fun Modal(
     state: OverlayState,
     modifier: Modifier = Modifier,
+    onDismissListener: () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     if (state.isVisible) {
         Dialog(
-            onDismissRequest = {},
-            properties = DialogProperties(usePlatformDefaultWidth = false),
+            onDismissRequest = onDismissListener,
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                dismissOnBackPress = true
+            ),
         ) {
             Column(
                 modifier = modifier,

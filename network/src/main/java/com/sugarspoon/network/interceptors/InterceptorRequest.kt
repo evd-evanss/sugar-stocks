@@ -27,15 +27,6 @@ class InterceptRequest @Inject constructor(
             requestBuilder.addHeader("access_token", "$it")
         }
 
-        val response = chain.proceed(requestBuilder.build())
-
-        //returns a response
-        return response
-    }
-
-    private fun String.getBase64() : String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        "Basic ${java.util.Base64.getMimeDecoder().decode(this)}"
-    } else {
-        String(android.util.Base64.decode(this, Base64.DEFAULT)) // Unresolved reference: decode
+        return chain.proceed(requestBuilder.build())
     }
 }
