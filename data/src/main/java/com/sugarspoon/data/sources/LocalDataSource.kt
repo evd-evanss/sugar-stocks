@@ -1,17 +1,17 @@
 package com.sugarspoon.data.sources
 
-import com.sugarspoon.data.domain.entity.StockEntity
+import com.sugarspoon.domain.model.local.SummaryStockEntity
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {
 
-    suspend fun save(stockEntity: StockEntity): Long
+    suspend fun save(summaryStockEntity: SummaryStockEntity): Long
 
     suspend fun delete(code: String): Int
 
-    suspend fun edit(stockEntity: StockEntity): Int
+    suspend fun edit(summaryStockEntity: SummaryStockEntity): Int
 
-    suspend fun findNote(code: String): Flow<StockEntity>
+    suspend fun findNote(code: String): Flow<SummaryStockEntity>
 
-    suspend fun getAllStocks(): Flow<List<StockEntity>>
+    suspend fun getAllStocks(): Flow<List<SummaryStockEntity>>
 }

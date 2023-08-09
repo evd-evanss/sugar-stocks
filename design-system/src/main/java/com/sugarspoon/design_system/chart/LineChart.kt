@@ -1,12 +1,8 @@
 package com.sugarspoon.design_system.chart
 
-import android.graphics.Paint
-import android.graphics.Typeface
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -24,21 +20,18 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sugarspoon.design_system.Dimensions.inlineSpacingMedium
-import com.sugarspoon.design_system.Dimensions.topSpacing
 import com.sugarspoon.design_system.chart.models.DataPoint
 import com.sugarspoon.design_system.text.SugarText
 import java.util.Locale
-import kotlin.math.roundToInt
 
 @Composable
 fun LineChart(
     modifier: Modifier = Modifier,
     data: List<DataPoint>,
     graphColor: Color,
-    showDashedLine: Boolean
+    showDashedLine: Boolean,
 ) {
     val textColor = MaterialTheme.colorScheme.onBackground
     if (data.isEmpty()) {
@@ -73,17 +66,19 @@ fun LineChart(
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth()
                 .drawBehind {
-                    val textPaint = android.graphics.Paint().apply {
-                        color = textColor.toArgb()
-                        this.textSize = 22f
-                    }
+                    val textPaint = android.graphics
+                        .Paint()
+                        .apply {
+                            color = textColor.toArgb()
+                            this.textSize = 22f
+                        }
 
                     val spacePerHour = (size.width - spacing) / data.size
                     val priceStep = (upperValue.y - lowerValue.y) / 5f
                     (0..4).forEach { i ->
                         drawContext.canvas.nativeCanvas.apply {
                             drawText(
-                                (lowerValue.y + priceStep * i).roundToInt().toString(),
+                                (lowerValue.y + priceStep * i).formatWithDecimalPlaces(),
                                 size.width - 40f,
                                 size.height - spacing - i * size.height / 5f,
                                 textPaint
@@ -99,7 +94,8 @@ fun LineChart(
                             val info = data[i]
                             val nextInfo = data.getOrNull(i + 1) ?: data.last()
                             val leftRatio = (info.y - lowerValue.y) / (upperValue.y - lowerValue.y)
-                            val rightRatio = (nextInfo.y - lowerValue.y) / (upperValue.y - lowerValue.y)
+                            val rightRatio =
+                                (nextInfo.y - lowerValue.y) / (upperValue.y - lowerValue.y)
 
                             val x1 = spacing + i * spacePerHour
                             val y1 = height - spacing - (leftRatio * height).toFloat()
@@ -120,7 +116,8 @@ fun LineChart(
                         }
                     }
 
-                    val fillPath = android.graphics.Path(strokePath.asAndroidPath())
+                    val fillPath = android.graphics
+                        .Path(strokePath.asAndroidPath())
                         .asComposePath()
                         .apply {
                             lineTo(lastX, size.height - spacing)
@@ -178,6 +175,6 @@ fun LineChart(
     }
 }
 
-fun Float.formatWith2DecimalPlaces(): String {
-    return String.format(locale = Locale.getDefault(), format = "%.2f", this)
+fun Double.formatWithDecimalPlaces(places: Int = 3): String {
+    return String.format(locale = Locale.getDefault(), format = "%.${places}f", this)
 }

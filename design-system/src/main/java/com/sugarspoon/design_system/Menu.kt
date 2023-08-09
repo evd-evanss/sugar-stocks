@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sugarspoon.design_system.Dimensions.inlineSpacingSmall
 import com.sugarspoon.design_system.text.SugarText
-import com.sugarspoon.icons.generated.SugarSpoonIcons
+import com.sugarspoon.design_system.icons.SugarSpoonIcons
 
 @Composable
 fun OverflowMenu(

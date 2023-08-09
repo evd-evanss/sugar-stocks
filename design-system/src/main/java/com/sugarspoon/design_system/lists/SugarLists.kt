@@ -41,11 +41,8 @@ import com.sugarspoon.design_system.Dimensions.inlineSpacingMedium
 import com.sugarspoon.design_system.Dimensions.inlineSpacingSmall
 import com.sugarspoon.design_system.Dimensions.topSpacing
 import com.sugarspoon.design_system.R
-import com.sugarspoon.design_system.buttons.Buttons
-import com.sugarspoon.design_system.chart.LineChart
-import com.sugarspoon.design_system.chart.models.DataPoint
 import com.sugarspoon.design_system.text.SugarText
-import com.sugarspoon.icons.generated.SugarSpoonIcons
+import com.sugarspoon.design_system.icons.SugarSpoonIcons
 
 object SugarLists {
 
@@ -433,15 +430,12 @@ object SugarLists {
     fun InflationItem(
         date: String,
         value: String,
-        data: List<DataPoint>,
         background: Color = MaterialTheme.colorScheme.background,
-        modifier: Modifier,
-        isLoading: Boolean = false,
-        onClick: () -> Unit
+        modifier: Modifier
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.skeleton(isLoading),
+            modifier = modifier,
         ) {
             Column(
                 modifier = Modifier
@@ -449,34 +443,19 @@ object SugarLists {
             ) {
                 SugarText(
                     modifier = Modifier
-                        .inlineSpacingMedium()
-                        .skeleton(isLoading),
-                    text = "INFLAÇÃO - $value%",
+                        .inlineSpacingMedium(),
+                    text = "INFLAÇÃO - ($value%)",
                     style = MaterialTheme.typography.titleMedium.copy(
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 )
                 SugarText(
                     modifier = Modifier
-                        .inlineSpacingMedium()
-                        .skeleton(isLoading),
+                        .inlineSpacingMedium(),
                     text = "Atualizado em: $date",
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.onBackground
                     )
-                )
-                LineChart(
-                    data = data.toMutableList(),
-                    graphColor = MaterialTheme.colorScheme.primary,
-                    showDashedLine = false,
-                    modifier = Modifier.width(50.dp).height(48.dp).topSpacing()
-                )
-                Buttons.PrimarySmall(
-                    modifier = Modifier
-                    .inlineSpacingMedium()
-                    .topSpacing(),
-                    text = "Ver histórico",
-                    onClick = onClick
                 )
             }
         }

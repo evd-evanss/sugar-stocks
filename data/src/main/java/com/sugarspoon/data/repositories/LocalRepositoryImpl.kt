@@ -1,18 +1,19 @@
 package com.sugarspoon.data.repositories
 
-import com.sugarspoon.data.domain.entity.StockEntity
 import com.sugarspoon.data.sources.LocalDataSource
+import com.sugarspoon.domain.model.local.SummaryStockEntity
+import com.sugarspoon.domain.repositories.LocalRepository
 import javax.inject.Inject
 
 class LocalRepositoryImpl @Inject constructor(
     private val dataSource: LocalDataSource
 ) : LocalRepository {
 
-    override suspend fun save(stockEntity: StockEntity) = dataSource.save(stockEntity)
+    override suspend fun save(summaryStockEntity: SummaryStockEntity) = dataSource.save(summaryStockEntity)
 
     override suspend fun delete(code: String) = dataSource.delete(code)
 
-    override suspend fun edit(stockEntity: StockEntity) = dataSource.edit(stockEntity)
+    override suspend fun edit(summaryStockEntity: SummaryStockEntity) = dataSource.edit(summaryStockEntity)
 
     override suspend fun findNote(code: String) = dataSource.findNote(code)
 

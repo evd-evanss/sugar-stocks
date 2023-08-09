@@ -1,13 +1,10 @@
 package com.sugarspoon.data.sources
 
-import com.google.gson.GsonBuilder
 import com.sugarspoon.data.api.ApiBrapi
-import com.sugarspoon.network.retrofit.RetrofitFactory
+import com.sugarspoon.data.retrofit.RetrofitFactory
 import javax.inject.Inject
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.http.Path
-import retrofit2.http.Query
 
 class BrapiDataSource @Inject constructor() {
 

@@ -21,6 +21,5 @@ dependencyResolutionManagement {
 rootProject.name = "Pocket Stocks"
 include ':app'
 include ':design-system'
-include ':icons'
-include ':network'
 include ':data'
+include ':domain'

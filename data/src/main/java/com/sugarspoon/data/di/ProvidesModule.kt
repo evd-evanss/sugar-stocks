@@ -3,15 +3,15 @@ package com.sugarspoon.data.di
 import android.content.Context
 import androidx.room.Room
 import com.sugarspoon.data.database.AppDataBase
-import com.sugarspoon.data.database.StockTable
-import com.sugarspoon.data.database.StocksDao
+import com.sugarspoon.domain.database.StocksDao
+import com.sugarspoon.domain.model.local.StockTable
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
-@Module
+@Module(includes = [DataModules::class])
 @InstallIn(SingletonComponent::class)
 class ProvidesModule {
 
@@ -24,7 +24,7 @@ class ProvidesModule {
         ).build()
 
     @Provides
-    fun providesNotesDao(appDataBase: AppDataBase) : StocksDao {
+    fun providesStocksDao(appDataBase: AppDataBase) : StocksDao {
         return appDataBase.stockDao()
     }
 }

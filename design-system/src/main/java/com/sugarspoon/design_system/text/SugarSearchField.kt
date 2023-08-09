@@ -3,7 +3,6 @@ package com.sugarspoon.design_system.text
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +17,7 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import com.sugarspoon.design_system.Dimensions
-import com.sugarspoon.icons.generated.SugarSpoonIcons
+import com.sugarspoon.design_system.icons.SugarSpoonIcons
 
 @Composable
 fun SugarSearchField(

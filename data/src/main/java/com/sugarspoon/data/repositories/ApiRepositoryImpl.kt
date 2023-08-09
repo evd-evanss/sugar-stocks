@@ -1,13 +1,11 @@
 package com.sugarspoon.data.repositories
 
-import com.instacart.library.truetime.TrueTime
-import com.sugarspoon.data.response.InflationDTO
-import com.sugarspoon.data.response.MarketStatus
 import com.sugarspoon.data.sources.BrapiDataSource
+import com.sugarspoon.domain.model.remote.MarketStatusDto
+import com.sugarspoon.domain.repositories.ApiRepository
 import java.util.Calendar
 import java.util.TimeZone
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ApiRepositoryImpl @Inject constructor(
@@ -28,25 +26,27 @@ class ApiRepositoryImpl @Inject constructor(
 
     override fun getMarketStatus() = flow {
         val currentDate = Calendar.getInstance().apply {
-            time = TrueTime.now()
+            //time = TrueTime.now()
             timeZone = TimeZone.getTimeZone("GMT-3") // Brazilian timezone.
         }
+        val dayOfWeek = currentDate.get(Calendar.DAY_OF_WEEK)
+        val timeOfDay = currentDate.get(Calendar.HOUR_OF_DAY)
 
-        when (currentDate.get(Calendar.DAY_OF_WEEK)) {
+        when (dayOfWeek) {
             Calendar.SUNDAY,
             Calendar.SATURDAY -> {
-                emit(MarketStatus(message = "Fechada.", false))
+                emit(MarketStatusDto(message = "Fechada.", false))
                 return@flow
             }
         }
 
-        val marketStatus = when (currentDate.get(Calendar.HOUR_OF_DAY)) {
+        val marketStatus = when (timeOfDay) {
             in 10..17 -> {
-                MarketStatus("Aberta para negociações.", true)
+                MarketStatusDto("Aberta para negociações.", true)
             }
 
             else -> {
-                MarketStatus("Fechada para negociações.", false)
+                MarketStatusDto("Fechada para negociações.", false)
             }
         }
         emit(marketStatus)

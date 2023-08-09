@@ -1,11 +1,11 @@
 package com.sugarspoon.data.di
 
-import com.sugarspoon.data.repositories.ApiRepository
 import com.sugarspoon.data.repositories.ApiRepositoryImpl
-import com.sugarspoon.data.repositories.LocalRepository
 import com.sugarspoon.data.repositories.LocalRepositoryImpl
 import com.sugarspoon.data.sources.LocalDataSource
 import com.sugarspoon.data.sources.LocalDataSourceImpl
+import com.sugarspoon.domain.repositories.ApiRepository
+import com.sugarspoon.domain.repositories.LocalRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

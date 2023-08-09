@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:name=".PocketFiiApplication"
+        android:name="com.sugarspoon.pocketstocks.PocketStocksApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -18,7 +18,7 @@
         android:theme="@style/Theme.PocketFinance"
         tools:targetApi="31">
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name="com.sugarspoon.pocketstocks.ui.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.PocketFinance">
             <intent-filter>
@@ -28,12 +28,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.sugarspoon.pocketstocks.ui.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PocketFinance">
         </activity>
         <activity
-            android:name=".ui.details.DetailsActivity"
+            android:name="com.sugarspoon.pocketstocks.ui.details.DetailsActivity"
             android:exported="true"
             android:theme="@style/Theme.PocketFinance" />
     </application>

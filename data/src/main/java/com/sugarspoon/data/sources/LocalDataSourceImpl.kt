@@ -1,16 +1,15 @@
 package com.sugarspoon.data.sources
 
-import com.sugarspoon.data.database.StocksDao
-import com.sugarspoon.data.domain.entity.StockEntity
+import com.sugarspoon.domain.database.StocksDao
+import com.sugarspoon.domain.model.local.SummaryStockEntity
 import javax.inject.Inject
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class LocalDataSourceImpl @Inject constructor(
     private val stocksDao: StocksDao
 ) : LocalDataSource {
 
-    override suspend fun save(stockEntity: StockEntity) = stocksDao.save(stockEntity)
+    override suspend fun save(summaryStockEntity: SummaryStockEntity) = stocksDao.save(summaryStockEntity)
 
     override suspend fun delete(code: String): Int {
         var response = 0
@@ -23,14 +22,14 @@ class LocalDataSourceImpl @Inject constructor(
         return response
     }
 
-    override suspend fun edit(stockEntity: StockEntity): Int {
+    override suspend fun edit(summaryStockEntity: SummaryStockEntity): Int {
         var response = 0
-        stockEntity.code.let {
+        summaryStockEntity.code.let {
             response = stocksDao.edit(
-                code = stockEntity.code,
-                name = stockEntity.name,
-                sector = stockEntity.sector,
-                logo = stockEntity.logo
+                code = summaryStockEntity.code,
+                name = summaryStockEntity.name,
+                sector = summaryStockEntity.sector,
+                logo = summaryStockEntity.logo
             )
         }
         return response
