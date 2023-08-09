@@ -5,8 +5,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.sugarspoon.design_system.chart.models.DataPoint
-import com.sugarspoon.domain.repositories.ApiRepository
 import com.sugarspoon.domain.repositories.LocalRepository
+import com.sugarspoon.domain.usecase.local.DeletePreferenceUseCase
+import com.sugarspoon.domain.usecase.local.FindPreferenceUseCase
+import com.sugarspoon.domain.usecase.local.GetAllPreferenceUseCase
+import com.sugarspoon.domain.usecase.local.SavePreferenceUseCase
+import com.sugarspoon.domain.usecase.remote.FetchDataOfInflationUseCase
+import com.sugarspoon.domain.usecase.remote.FetchDetailUseCase
+import com.sugarspoon.domain.usecase.remote.FetchMarketStatusUseCase
+import com.sugarspoon.domain.usecase.remote.FetchQuoteListUseCase
 import com.sugarspoon.pocketstocks.base.BaseViewModelMVI
 import com.sugarspoon.pocketstocks.models.SegmentOptions
 import com.sugarspoon.pocketstocks.models.SegmentedRequest
@@ -26,8 +33,14 @@ import kotlinx.coroutines.withContext
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: ApiRepository,
-    private val localRepository: LocalRepository,
+    private val fetchQuoteListUseCase: FetchQuoteListUseCase,
+    private val fetchDetailUseCase: FetchDetailUseCase,
+    private val fetchMarketStatusUseCase: FetchMarketStatusUseCase,
+    private val fetchDataOfInflationUseCase: FetchDataOfInflationUseCase,
+    private val savePreferenceUseCase: SavePreferenceUseCase,
+    private val deletePreferenceUseCase: DeletePreferenceUseCase,
+    private val getAllPreferenceUseCase: GetAllPreferenceUseCase,
+    private val findPreferenceUseCase: FindPreferenceUseCase,
     private val uiMapper: UiMapper
 ) : BaseViewModelMVI<UiState, UiEvent>(UiState()) {
 
@@ -43,11 +56,9 @@ class MainViewModel @Inject constructor(
                 createNewState(newState = oldState.copy(displaySkeleton = true))
                 fetchQuoteList(oldState)
             }
-
             is UiEvent.LoadStocksPreferences -> {
                 fetchWalletStocks(oldState)
             }
-
             is UiEvent.LoadMarketStatus -> {
                 fetchMarketStatus(oldState)
             }
@@ -135,7 +146,7 @@ class MainViewModel @Inject constructor(
 
             is UiEvent.SaveStockDetail -> {
                 viewModelScope.launch {
-                    localRepository.save(
+                    savePreferenceUseCase.invoke(
                         uiMapper.mapSummaryStockEntity(
                             SummaryStock(
                                 code = event.code,
@@ -150,7 +161,7 @@ class MainViewModel @Inject constructor(
 
             is UiEvent.RemoveStockDetailItem -> {
                 viewModelScope.launch {
-                    val response = localRepository.delete(event.code)
+                    val response = deletePreferenceUseCase.invoke(event.code)
                     emitEvent(UiEvent.LoadStocksPreferences)
                 }
             }
@@ -158,8 +169,8 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fetchMarketStatus(oldState: UiState) = viewModelScope.launch {
-        repository.getMarketStatus()
-            .zip(repository.getDetail("^BVSP")) { marketStatusDto, detailsResponse ->
+        fetchMarketStatusUseCase.invoke()
+            .zip(fetchDetailUseCase.invoke("^BVSP")) { marketStatusDto, detailsResponse ->
                 createNewState(
                     newState = oldState.copy(
                         marketStatus = uiMapper.mapMarketStatus(marketStatusDto),
@@ -182,37 +193,32 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fetchDataOfInflation(oldState: UiState) = viewModelScope.launch {
-        repository.getInflation("brazil")
-            .onStart {
-                createNewState(
-                    oldState.copy(inflationLoading = true)
-                )
-            }
-            .catch {
-                withContext(Main) {
+        fetchDataOfInflationUseCase.invoke("brazil").onSuccess { response ->
+            response.collect { result ->
+                result.onSuccess {
                     createNewState(
                         newState = oldState.copy(
-                            error = "Erro: $it",
-                            openModal = true,
-                            inflation = oldState.inflation,
+                            inflation = uiMapper.mapInflation(it),
                             inflationLoading = false
                         )
                     )
                 }
             }
-            .collect { inflationDTO ->
-                createNewState(
-                    newState = oldState.copy(
-                        inflation = uiMapper.mapInflation(inflationDTO.inflation.first()),
-                        inflationLoading = false
-                    )
+        }.onFailure {
+            createNewState(
+                newState = oldState.copy(
+                    error = "Erro: $it",
+                    openModal = true,
+                    inflation = oldState.inflation,
+                    inflationLoading = false
                 )
-            }
+            )
+        }
     }
 
     private fun fetchQuoteList(oldState: UiState) = viewModelScope.launch {
-        repository.getQuoteList()
-            .zip(repository.getDetail("^BVSP")) { brapiResponse, detailsResponse ->
+        fetchQuoteListUseCase.invoke()
+            .zip(fetchDetailUseCase.invoke("^BVSP")) { brapiResponse, detailsResponse ->
                 val stocks = uiMapper.mapStockList(brapiResponse)
                 createNewState(
                     newState = oldState.copy(
@@ -245,7 +251,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fetchDetail(oldState: UiState, ticker: String) = viewModelScope.launch {
-        repository.getDetail(ticker, range = SegmentOptions.ONE_DAY.option, interval = "60m")
+        fetchDetailUseCase.invoke(ticker, range = SegmentOptions.ONE_DAY.option, interval = "60m")
             .catch {
                 withContext(Main) {
                     createNewState(
@@ -288,7 +294,7 @@ class MainViewModel @Inject constructor(
         segmentedDetail: SegmentedRequest,
         selectedSegment: SegmentOptions,
     ) = viewModelScope.launch {
-        repository.getDetail(
+        fetchDetailUseCase.invoke(
             tickers = segmentedDetail.ticker,
             range = segmentedDetail.range,
             interval = segmentedDetail.interval
@@ -328,14 +334,14 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fetchWalletStock(oldState: UiState, code: String) = viewModelScope.launch {
-        localRepository.findNote(code)
+        findPreferenceUseCase.invoke(code)
             .collect {
                 createNewState(oldState.copy(displaySaveButton = it == null))
             }
     }
 
     private fun fetchWalletStocks(oldState: UiState) = viewModelScope.launch {
-        localRepository.getAllStocks()
+        getAllPreferenceUseCase.invoke()
             .catch {
                 createNewState(
                     oldState.copy(
