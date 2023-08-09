@@ -5,5 +5,5 @@ Um aplicativo para acompanhar e monitorar dados de ações na B3
 https://brapi.dev/
 
 
-https://github.com/evd-evanss/pocket-finance/assets/26419059/de17df79-3678-4c6e-a622-bd0398b0b272
+https://github.com/evd-evanss/sugar-stocks/assets/26419059/6ae5fbce-b0b1-45a4-bdac-b1eb59b8df68
 
