@@ -156,7 +156,7 @@ fun StockDetailsScreen(
             )
             SugarText(
                 modifier = Modifier.inlineSpacingMedium(),
-                text = uiState.stockDetail.regularMarketPrice,
+                text = "R$ ${uiState.stockDetail.regularMarketPrice}",
                 style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground)
             )
 
@@ -169,7 +169,7 @@ fun StockDetailsScreen(
             )
             SugarText(
                 modifier = Modifier.inlineSpacingMedium(),
-                text = uiState.stockDetail.averageDailyVolume10Day,
+                text = InfoOrValue(uiState.stockDetail.averageDailyVolume10Day),
                 style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
@@ -181,7 +181,7 @@ fun StockDetailsScreen(
             )
             SugarText(
                 modifier = Modifier.inlineSpacingMedium(),
-                text = uiState.stockDetail.averageDailyVolume3Month,
+                text = InfoOrValue(uiState.stockDetail.averageDailyVolume3Month),
                 style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
@@ -244,6 +244,7 @@ fun StockDetailsScreen(
 }
 
 private val ChartHeight = 200.dp
+private val InfoOrValue: (String) -> String = { if(it == "0") "Sem informações" else it }
 
 @Composable
 private fun getTextColor(number: Number) =
