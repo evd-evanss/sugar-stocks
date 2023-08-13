@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-abstract class BaseViewModelMVI<T : UiStates>(initialVal: T) : ViewModel() {
+abstract class BaseViewModel<T : UiStates>(initialVal: T) : ViewModel() {
 
     protected val currentState: MutableStateFlow<T> = MutableStateFlow(initialVal)
 
@@ -20,5 +20,3 @@ abstract class BaseViewModelMVI<T : UiStates>(initialVal: T) : ViewModel() {
 }
 
 interface UiStates
-
-interface UiEvents

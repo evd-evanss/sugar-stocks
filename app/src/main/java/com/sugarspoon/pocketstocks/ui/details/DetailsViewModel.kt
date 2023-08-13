@@ -8,7 +8,7 @@ import com.sugarspoon.design_system.chart.models.DataPoint
 import com.sugarspoon.domain.usecase.local.FindPreferenceUseCase
 import com.sugarspoon.domain.usecase.local.SavePreferenceUseCase
 import com.sugarspoon.domain.usecase.remote.FetchDetailUseCase
-import com.sugarspoon.pocketstocks.base.BaseViewModelMVI
+import com.sugarspoon.pocketstocks.base.BaseViewModel
 import com.sugarspoon.pocketstocks.models.SegmentOptions
 import com.sugarspoon.pocketstocks.models.SegmentedRequest
 import com.sugarspoon.pocketstocks.models.SummaryStock
@@ -26,7 +26,7 @@ class DetailsViewModel @Inject constructor(
     private val savePreferenceUseCase: SavePreferenceUseCase,
     private val findPreferenceUseCase: FindPreferenceUseCase,
     private val uiMapper: UiMapper
-) : BaseViewModelMVI<DetailsUiState>(DetailsUiState()) {
+) : BaseViewModel<DetailsUiState>(DetailsUiState()) {
 
     override val uiState: @Composable () -> DetailsUiState
         get() = {

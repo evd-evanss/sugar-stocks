@@ -5,7 +5,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.sugarspoon.domain.usecase.remote.FetchApiDataUseCase
-import com.sugarspoon.pocketstocks.base.BaseViewModelMVI
+import com.sugarspoon.pocketstocks.base.BaseViewModel
 import com.sugarspoon.pocketstocks.ui.mappers.UiMapper
 import java.net.UnknownHostException
 import java.util.Locale
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel @Inject constructor(
     private val fetchApiDataUseCase: FetchApiDataUseCase,
     private val uiMapper: UiMapper
-) : BaseViewModelMVI<HomeUiState>(HomeUiState()) {
+) : BaseViewModel<HomeUiState>(HomeUiState()) {
 
     override val uiState: @Composable () -> HomeUiState
         get() = {

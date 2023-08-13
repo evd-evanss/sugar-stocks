@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.sugarspoon.domain.usecase.local.DeletePreferenceUseCase
 import com.sugarspoon.domain.usecase.local.GetAllPreferenceUseCase
-import com.sugarspoon.pocketstocks.base.BaseViewModelMVI
+import com.sugarspoon.pocketstocks.base.BaseViewModel
 import com.sugarspoon.pocketstocks.ui.mappers.UiMapper
 import javax.inject.Inject
 import kotlinx.coroutines.flow.catch
@@ -17,7 +17,7 @@ class StockPreferencesViewModel @Inject constructor(
     private val deletePreferenceUseCase: DeletePreferenceUseCase,
     private val getAllPreferenceUseCase: GetAllPreferenceUseCase,
     private val uiMapper: UiMapper
-) : BaseViewModelMVI<PreferencesUiState>(PreferencesUiState()) {
+) : BaseViewModel<PreferencesUiState>(PreferencesUiState()) {
 
     override val uiState: @Composable () -> PreferencesUiState
         get() = {
