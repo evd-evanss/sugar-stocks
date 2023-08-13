@@ -4,10 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
@@ -19,17 +17,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.sugarspoon.design_system.bottombar.BottomBar
 import com.sugarspoon.design_system.buttons.MenuButton
+import com.sugarspoon.design_system.icons.SugarSpoonIcons
 import com.sugarspoon.design_system.overlay.SugarDialog
 import com.sugarspoon.design_system.theme.DesignSystemTheme
-import com.sugarspoon.design_system.icons.SugarSpoonIcons
+import com.sugarspoon.pocketstocks.di.ViewModelInjector
 import com.sugarspoon.pocketstocks.navigation.Screens
 import com.sugarspoon.pocketstocks.navigation.navigation
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
+    @Inject
+    lateinit var viewModelInjector: ViewModelInjector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,29 +39,25 @@ class MainActivity : ComponentActivity() {
             val tabSelected = remember { mutableStateOf("") }
             LaunchedEffect(true) {
                 tabSelected.value = "${Screens.Home.title}, item 1 de 3"
-                viewModel.getQuoteList()
+                viewModelInjector.homeViewModel.onRefresh()
             }
             val isVisible = remember {
                 mutableStateOf(false)
             }
-            val stateStockScreen = viewModel.uiState.invoke()
+            val homeUiState = viewModelInjector.homeViewModel.uiState.invoke()
             DesignSystemTheme(darkTheme = true) {
-
-                Box(Modifier.fillMaxSize()) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = Screens.Home.name
                     ) {
-                        NavHost(
-                            navController = navController,
-                            startDestination = Screens.Home.name
-                        ) {
-                            navigation(
-                                viewModel = viewModel,
-                                stateStockScreen = stateStockScreen
-                            )
-                        }
+                        navigation(
+                            viewModels = viewModelInjector,
+                            homeUiState = homeUiState,
+                            onFinish = { finish() },
+                        )
                     }
                     BottomBar(
                         modifier = Modifier

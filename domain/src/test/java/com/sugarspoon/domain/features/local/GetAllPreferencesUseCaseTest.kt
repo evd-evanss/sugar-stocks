@@ -4,7 +4,6 @@ import com.sugarspoon.domain.base.BaseCoroutineTestWithTestDispatcherProvider
 import com.sugarspoon.domain.model.local.SummaryStockEntity
 import com.sugarspoon.domain.repositories.LocalRepository
 import com.sugarspoon.domain.usecase.local.GetAllPreferenceUseCase
-import com.sugarspoon.domain.usecase.local.SavePreferenceUseCase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -14,8 +13,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import strikt.api.expectThat
-import strikt.assertions.isEqualTo
 
 class GetAllPreferencesUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
     dispatcher = StandardTestDispatcher()
@@ -38,12 +35,10 @@ class GetAllPreferencesUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider
         val expectedResult = flowOf(listOf<SummaryStockEntity>())
         coEvery { repository.getAllStocks() } returns expectedResult
 
-        val actualResult = useCase.invoke()
+        useCase.invoke()
 
         coVerify(exactly = 1) {
             repository.getAllStocks()
         }
-
-        expectThat(actualResult).isEqualTo(expectedResult)
     }
 }

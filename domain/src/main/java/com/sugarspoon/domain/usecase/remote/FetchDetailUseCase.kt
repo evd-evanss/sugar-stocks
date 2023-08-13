@@ -7,6 +7,6 @@ class FetchDetailUseCase @Inject constructor(
     private val repository: ApiRepository
 ) {
 
-    fun invoke(tickers: String, range: String = "", interval: String = "") =
+    suspend fun invoke(tickers: String, range: String = "", interval: String = "") =
         repository.getDetail(tickers, range, interval)
 }

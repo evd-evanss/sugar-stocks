@@ -3,6 +3,7 @@ package com.sugarspoon.design_system.lists
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +44,7 @@ import com.sugarspoon.design_system.Dimensions.topSpacing
 import com.sugarspoon.design_system.R
 import com.sugarspoon.design_system.text.SugarText
 import com.sugarspoon.design_system.icons.SugarSpoonIcons
+import com.sugarspoon.design_system.theme.SkeletonColor
 
 object SugarLists {
 
@@ -51,6 +53,7 @@ object SugarLists {
         logo: String,
         name: String,
         code: String,
+        change: String,
         sector: String,
         background: Color = MaterialTheme.colorScheme.background,
         modifier: Modifier,
@@ -131,6 +134,20 @@ object SugarLists {
                                     text = sector,
                                     style = MaterialTheme.typography.bodyLarge,
                                     maxLines = 1
+                                )
+                            }
+                            Column(
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                SugarText(
+                                    modifier = Modifier.padding(end = Dimensions.SpacingVerySmall),
+                                    text = "Variação máxima (dia):",
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                                SugarText(
+                                    modifier = Modifier,
+                                    text = change,
+                                    style = MaterialTheme.typography.bodyLarge
                                 )
                             }
                         }
@@ -486,7 +503,7 @@ fun Modifier.skeleton(isVisible: Boolean, shape: Shape = Dimensions.CardShape) =
         color = MaterialTheme.colorScheme.surfaceVariant,
         shape = shape,
         highlight = PlaceholderHighlight.shimmer(
-            highlightColor = MaterialTheme.colorScheme.primary
+            highlightColor =SkeletonColor
         )
     )
 }

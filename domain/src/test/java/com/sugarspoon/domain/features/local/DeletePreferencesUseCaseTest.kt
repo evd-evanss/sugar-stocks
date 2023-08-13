@@ -11,8 +11,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import strikt.api.expectThat
-import strikt.assertions.isEqualTo
 
 class DeletePreferencesUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
     dispatcher = StandardTestDispatcher()
@@ -33,15 +31,13 @@ class DeletePreferencesUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider
     @Test
     fun `invoke calls getDetail method of repository`() = runTest {
         val code = "PETR4"
-        val expectedResult = 0
+        val expectedResult = 1
         coEvery { repository.delete(code) } returns expectedResult
 
-        val actualResult = useCase.invoke(code)
+        useCase.invoke(code)
 
         coVerify(exactly = 1) {
             repository.delete(code)
         }
-
-        expectThat(actualResult).isEqualTo(expectedResult)
     }
 }

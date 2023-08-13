@@ -19,6 +19,7 @@ val BloodLight = Color(0xFFF55555)
 val BackgroundLight = Color(0xFFF8F9FA)
 val BackgroundDark = Color(0xFF002236)
 
+val SkeletonColor = GrayLight
 val StocksColor: (Boolean) -> Color = { if(it) Color(0xFFB8C2FF) else Color(0xFF3949AB) }
 val FixedIncomeColor: (Boolean) -> Color = { if(it) Color(0xFFA6EBF3) else Color(0xFF00ACC1) }
 val CambialColor: (Boolean) -> Color = { if (it)Color(0xFFF9FDB6) else Color(0xFFC0CA33)}

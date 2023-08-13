@@ -1,10 +1,8 @@
 package com.sugarspoon.domain.base
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestDispatcher
 import org.junit.Rule
 
-@OptIn(ExperimentalCoroutinesApi::class)
 abstract class BaseCoroutineTestWithTestDispatcherProvider(
     private val dispatcher: TestDispatcher
 ) {

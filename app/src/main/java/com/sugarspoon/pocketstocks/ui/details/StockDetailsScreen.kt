@@ -1,6 +1,5 @@
 package com.sugarspoon.pocketstocks.ui.details
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,7 @@ import com.sugarspoon.design_system.Dimensions.topSpacing
 import com.sugarspoon.design_system.buttons.Buttons
 import com.sugarspoon.design_system.chart.LineChart
 import com.sugarspoon.design_system.overlay.CircularSugarLoading
+import com.sugarspoon.design_system.overlay.GenericDialog
 import com.sugarspoon.design_system.overlay.SugarLoading
 import com.sugarspoon.design_system.overlay.rememberOverlayState
 import com.sugarspoon.design_system.segmented.SegmentText
@@ -35,27 +35,20 @@ import com.sugarspoon.design_system.text.SugarText
 import com.sugarspoon.design_system.topbar.TopBar
 import com.sugarspoon.pocketfinance.R
 import com.sugarspoon.pocketstocks.models.SegmentOptions
-import com.sugarspoon.pocketstocks.ui.main.MainViewModel
-import com.sugarspoon.pocketstocks.ui.main.UiState
-import com.sugarspoon.pocketstocks.utils.formatWith2DecimalPlaces
-import java.text.NumberFormat
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.TimeZone
 import kotlinx.coroutines.launch
 
 @Composable
 fun StockDetailsScreen(
-    viewModel: MainViewModel,
+    viewModel: DetailsViewModel,
     logo: String,
     onBackPressed: () -> Unit,
-    code: String,
-    state: UiState
+    uiState: DetailsUiState,
+    code: String
 ) {
     val overlayState = rememberOverlayState()
     val scrollState = rememberScrollState()
-    LaunchedEffect(state.detailsLoading) {
-        overlayState.handleVisibility(state.detailsLoading)
+    LaunchedEffect(uiState.detailsLoading) {
+        overlayState.handleVisibility(uiState.detailsLoading)
     }
 
     LaunchedEffect(key1 = code) {
@@ -63,12 +56,12 @@ fun StockDetailsScreen(
             viewModel.getDetail(code)
         }
     }
-    LaunchedEffect(key1 = state.displaySaveButton) {
+    LaunchedEffect(key1 = uiState.displaySaveButton) {
         launch {
             viewModel.findStockInWallet(code)
         }
     }
-    if(state.detailsLoading.not()) {
+    if (uiState.detailsLoading.not()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -82,6 +75,7 @@ fun StockDetailsScreen(
                 iconRight = R.drawable.ic_close,
                 onClickRight = {
                     onBackPressed()
+                    viewModel.clearUiState()
                 },
             )
 
@@ -109,7 +103,7 @@ fun StockDetailsScreen(
                     )
                     SugarText(
                         modifier = Modifier.endSpacingMedium(),
-                        text = state.stockDetail.longName,
+                        text = uiState.stockDetail.longName,
                         style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground)
                     )
                 }
@@ -117,93 +111,106 @@ fun StockDetailsScreen(
             Box(modifier = Modifier.height(ChartHeight)) {
                 CircularSugarLoading(
                     modifier = Modifier.height(ChartHeight),
-                    isLoading = state.isChartLoading,
+                    isLoading = uiState.isChartLoading,
                     text = "Carregando dados do gráfico"
                 ) {
                     LineChart(
-                        data = state.historicalDataPrice,
+                        data = uiState.historicalDataPrice,
                         graphColor = MaterialTheme.colorScheme.primary,
                         showDashedLine = true,
-                        modifier = Modifier.inlineSpacingMedium().fillMaxWidth().height(ChartHeight),
+                        modifier = Modifier
+                            .inlineSpacingMedium()
+                            .fillMaxWidth()
+                            .height(ChartHeight),
                     )
                 }
             }
             SegmentedControl(
-                modifier = Modifier.inlineSpacingMedium().topSpacing(),
+                modifier = Modifier
+                    .inlineSpacingMedium()
+                    .topSpacing(),
                 segments = SegmentOptions.values().toMutableList(),
-                selectedSegment = state.selectedSegment,
+                selectedSegment = uiState.selectedSegment,
                 onSegmentSelected = viewModel::setSegmentOption
-            ) { segmented , isSelected->
+            ) { segmented, isSelected ->
                 SegmentText(text = segmented.text, isSelected = isSelected)
             }
             SugarText(
-                modifier = Modifier.inlineSpacingMedium().topSpacing(),
+                modifier = Modifier
+                    .inlineSpacingMedium()
+                    .topSpacing(),
                 text = "Última atualização",
                 style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
                 modifier = Modifier.inlineSpacingMedium(),
-                text = state.stockDetail.regularMarketTime.getDateTime(),
+                text = uiState.stockDetail.regularMarketTime,
                 style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.primary)
             )
             SugarText(
-                modifier = Modifier.inlineSpacingMedium().topSpacing(),
+                modifier = Modifier
+                    .inlineSpacingMedium()
+                    .topSpacing(),
                 text = "Preço",
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
                 modifier = Modifier.inlineSpacingMedium(),
-                text = state.stockDetail.regularMarketPrice.asCurrency(),
+                text = uiState.stockDetail.regularMarketPrice,
                 style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground)
             )
 
             SugarText(
-                modifier = Modifier.inlineSpacingMedium().topSpacing(),
+                modifier = Modifier
+                    .inlineSpacingMedium()
+                    .topSpacing(),
                 text = "Volume negociado (Média de 10 dias)",
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
                 modifier = Modifier.inlineSpacingMedium(),
-                text = state.stockDetail.averageDailyVolume10Day.toDouble().formatWith2DecimalPlaces(),
+                text = uiState.stockDetail.averageDailyVolume10Day,
                 style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
-                modifier = Modifier.inlineSpacingMedium().topSpacing(),
+                modifier = Modifier
+                    .inlineSpacingMedium()
+                    .topSpacing(),
                 text = "Volume negociado (Média de 3 meses)",
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
                 modifier = Modifier.inlineSpacingMedium(),
-                text = state.stockDetail.averageDailyVolume3Month.toDouble().formatWith2DecimalPlaces(),
+                text = uiState.stockDetail.averageDailyVolume3Month,
                 style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
-                modifier = Modifier.inlineSpacingMedium().topSpacing(),
+                modifier = Modifier
+                    .inlineSpacingMedium()
+                    .topSpacing(),
                 text = "Variação (dia)",
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
                 modifier = Modifier.inlineSpacingMedium(),
-                text = state.stockDetail.regularMarketChange.asCurrency() + " (${
-                    String.format(
-                        locale = Locale.getDefault(),
-                        "%.2f",
-                        state.stockDetail.regularMarketChangePercent.toDouble()
-                    )
-                } %)",
-                style = MaterialTheme.typography.titleLarge.copy(color = getTextColor(state.stockDetail.regularMarketChange))
+                text = uiState.stockDetail.regularMarketChange + " (${uiState.stockDetail.regularMarketChangePercent} %)",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = getTextColor(uiState.stockDetail.regularMarketChangeNumber)
+                )
             )
             SugarText(
-                modifier = Modifier.inlineSpacingMedium().topSpacing(),
+                modifier = Modifier
+                    .inlineSpacingMedium()
+                    .topSpacing(),
                 text = "Capitalização de mercado",
                 style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground)
             )
             SugarText(
                 modifier = Modifier.inlineSpacingMedium(),
-                text = state.stockDetail.marketCap.asCurrency().addCurrencySuffix(),
-                style = MaterialTheme.typography.titleLarge.copy(color = getTextColor(state.stockDetail.marketCap))
+                text = uiState.stockDetail.marketCap,
+                style = MaterialTheme.typography.titleLarge.copy(color = getTextColor(uiState.stockDetail.marketCapNumber))
             )
-            if(state.displaySaveButton) {
+            if (uiState.displaySaveButton) {
                 Buttons.Primary(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -220,6 +227,20 @@ fun StockDetailsScreen(
         }
     }
     SugarLoading(overlayState = overlayState, onDismissListener = onBackPressed)
+    GenericDialog(
+        title = "Não foi possível recuperar os dados de $code",
+        message = uiState.error,
+        buttonTitlePositive = "Tentar novamente",
+        buttonTitleNegative = "Fechar",
+        onActionPositive = {
+            viewModel.getDetail(code)
+        },
+        displayError = uiState.openModal,
+        onActionNegative = {
+            onBackPressed()
+            viewModel.clearUiState()
+        }
+    )
 }
 
 private val ChartHeight = 200.dp
@@ -227,49 +248,3 @@ private val ChartHeight = 200.dp
 @Composable
 private fun getTextColor(number: Number) =
     if (number.toDouble() < 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-
-private fun String.getDateTime(): String {
-    return if(this.isEmpty()) this
-    else try {
-        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        formatter.timeZone = TimeZone.getTimeZone("UTC")
-        val value = formatter.parse(this)
-        val dateFormatter = SimpleDateFormat("dd/MM/yyyy - hh:mm a", Locale.getDefault())
-        dateFormatter.timeZone = TimeZone.getDefault()
-        dateFormatter.format(value)
-    } catch (e: Exception) {
-        "00/00/0000 - 00:00"
-    }
-}
-
-@SuppressLint("ConstantLocale")
-private val currencyFormatter = NumberFormat.getCurrencyInstance(Locale.getDefault()).configure()
-
-private fun NumberFormat.configure() = apply {
-    maximumFractionDigits = 2
-    minimumFractionDigits = 2
-}
-
-fun Number.asCurrency(): String {
-    return currencyFormatter.format(this)
-}
-
-fun String.addCurrencySuffix(): String {
-    val points = this.fold(0) { acc, c ->
-        if(c == '.') acc + 1 else acc + 0
-    }
-    return when (points) {
-        2 -> this.split(".").first() + " mi"
-        3 -> this.split(".").first() + " bi"
-        4 -> this.split(".").first() + " tri"
-        else -> this
-    }
-}
-
-fun String.formatToCurrency(): String {
-    return format(locale = Locale.getDefault(), "%.2f").replace(".", ",")
-}
-
-fun Number?.formatToPercentage(): String {
-    return if(this != null) String.format( "%.2f",this) else ""
-}
