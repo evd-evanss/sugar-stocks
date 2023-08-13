@@ -65,19 +65,25 @@ class UiMapper @Inject constructor() {
         twoHundredDayAverageChangePercent = response.twoHundredDayAverageChangePercent ?: 0
     )
 
-    fun mapToHistoricalDataPrice(response: List<HistoricalDataPriceDto>?): List<HistoricalDataPrice> {
+    fun mapToHistoricalDataPrice(response: List<HistoricalDataPriceDto>?): List<HistoricalDataPrice?> {
         return response?.map { it.map() } ?: listOf()
     }
 
-    private fun HistoricalDataPriceDto.map() = HistoricalDataPrice(
-        adjustedClose = adjustedClose ?: Any(),
-        close = close ?: 0L,
-        date = date ?: 0,
-        high = high ?: 0L,
-        low = low ?: 0L,
-        openPrice = openPrice ?: 0L,
-        volume = volume ?: 0L
-    )
+    private fun HistoricalDataPriceDto.map() : HistoricalDataPrice?{
+        return if(openPrice == null && high == null && close == null) {
+            null
+        } else {
+            HistoricalDataPrice(
+                adjustedClose = adjustedClose ?: Any(),
+                close = close ?: 0L,
+                date = date ?: 0,
+                high = high ?: 0L,
+                low = low ?: 0L,
+                openPrice = openPrice ?: 0L,
+                volume = volume ?: 0L
+            )
+        }
+    }
 
     fun mapSummaryStockEntity(response: SummaryStock) = SummaryStockEntity(
         code = response.code,

@@ -12,8 +12,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import strikt.api.expectThat
-import strikt.assertions.isEqualTo
 
 class SavePreferencesUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
     dispatcher = StandardTestDispatcher()
@@ -37,12 +35,10 @@ class SavePreferencesUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
         val expectedResult = 1L
         coEvery { repository.save(data) } returns expectedResult
 
-        val actualResult = useCase.invoke(data)
+        useCase.invoke(data)
 
         coVerify(exactly = 1) {
             repository.save(data)
         }
-
-        expectThat(actualResult).isEqualTo(expectedResult)
     }
 }

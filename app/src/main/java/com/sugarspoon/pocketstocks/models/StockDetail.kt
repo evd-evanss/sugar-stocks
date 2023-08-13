@@ -27,7 +27,7 @@ data class StockDetail(
     val regularMarketVolume: Number = 0,
     val shortName: String = "",
     val symbol: String = "",
-    val historicalDataPrice: List<HistoricalDataPrice>? = listOf(),
+    val historicalDataPrice: List<HistoricalDataPrice?> = listOf(),
     val twoHundredDayAverage: Number = 0.0,
     val twoHundredDayAverageChange: Number = 0.0,
     val twoHundredDayAverageChangePercent: Number = 0.0

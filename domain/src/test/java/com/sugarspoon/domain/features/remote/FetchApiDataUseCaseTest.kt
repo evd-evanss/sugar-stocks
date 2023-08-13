@@ -7,7 +7,7 @@ import com.sugarspoon.domain.model.remote.InflationResponseDTO
 import com.sugarspoon.domain.model.remote.MarketStatusDto
 import com.sugarspoon.domain.model.remote.QuotesResponseDto
 import com.sugarspoon.domain.repositories.ApiRepository
-import com.sugarspoon.domain.usecase.remote.FetchQuoteListUseCase
+import com.sugarspoon.domain.usecase.remote.FetchApiDataUseCase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -19,20 +19,20 @@ import org.junit.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
-class FetchQuoteListUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
+class FetchApiDataUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
     dispatcher = StandardTestDispatcher()
 ) {
 
     @MockK
     private lateinit var repository: ApiRepository
 
-    private lateinit var useCase: FetchQuoteListUseCase
+    private lateinit var useCase: FetchApiDataUseCase
 
     @Before
     fun setup() {
         MockKAnnotations.init(this)
 
-        useCase = FetchQuoteListUseCase(repository)
+        useCase = FetchApiDataUseCase(repository)
     }
 
     @Test
@@ -41,7 +41,7 @@ class FetchQuoteListUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
             ApiDataDto(
                 responseDto = BrapiResponseDto(listOf(), listOf()),
                 inflationResponseDTO = InflationResponseDTO(listOf()),
-                marketStatusDto = MarketStatusDto("", false),
+                marketStatusDto = MarketStatusDto("AA", false),
                 quotesResponseDto = QuotesResponseDto("", listOf())
             )
         )

@@ -5,12 +5,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import com.sugarspoon.design_system.chart.models.DataPoint
-import com.sugarspoon.domain.usecase.local.DeletePreferenceUseCase
 import com.sugarspoon.domain.usecase.local.FindPreferenceUseCase
-import com.sugarspoon.domain.usecase.local.GetAllPreferenceUseCase
 import com.sugarspoon.domain.usecase.local.SavePreferenceUseCase
 import com.sugarspoon.domain.usecase.remote.FetchDetailUseCase
-import com.sugarspoon.domain.usecase.remote.FetchQuoteListUseCase
 import com.sugarspoon.pocketstocks.base.BaseViewModelMVI
 import com.sugarspoon.pocketstocks.models.SegmentOptions
 import com.sugarspoon.pocketstocks.models.SegmentedRequest
@@ -18,10 +15,8 @@ import com.sugarspoon.pocketstocks.models.SummaryStock
 import com.sugarspoon.pocketstocks.ui.mappers.UiMapper
 import com.sugarspoon.pocketstocks.utils.formatWith2DecimalPlaces
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -85,14 +80,17 @@ class DetailsViewModel @Inject constructor(
                     uiMapper.mapToHistoricalDataPrice(response.results.first().historicalDataPrice)
                 val dataPoint = mutableListOf<DataPoint>()
                 result.forEach { historicalDataPrice ->
-                    dataPoint.add(
-                        DataPoint(
-                            y = historicalDataPrice.openPrice.toDouble(),
-                            yLabel = historicalDataPrice.openPrice.toDouble()
-                                .formatWith2DecimalPlaces(),
-                            xLabel = historicalDataPrice.date.toString()
+                    historicalDataPrice?.let {
+                        dataPoint.add(
+                            DataPoint(
+                                y = historicalDataPrice.openPrice.toDouble(),
+                                yLabel = historicalDataPrice.openPrice.toDouble()
+                                    .formatWith2DecimalPlaces(),
+                                xLabel = historicalDataPrice.date.toString()
+                            )
                         )
-                    )
+                    }
+
                 }
                 createNewState(
                     newState = oldState.copy(
@@ -130,7 +128,7 @@ class DetailsViewModel @Inject constructor(
                 val chartData =
                     uiMapper.mapToHistoricalDataPrice(response.results.first().historicalDataPrice)
                 chartData.forEach { historicalDataPrice ->
-                    dataPoint.add(
+                    historicalDataPrice?.let {dataPoint.add(
                         DataPoint(
                             y = historicalDataPrice.openPrice.toDouble(),
                             yLabel = historicalDataPrice.openPrice.toDouble()
@@ -138,6 +136,8 @@ class DetailsViewModel @Inject constructor(
                             xLabel = historicalDataPrice.date.toString()
                         )
                     )
+                    }
+
                 }
                 createNewState(
                     newState = oldState.copy(

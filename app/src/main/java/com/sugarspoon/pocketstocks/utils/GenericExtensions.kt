@@ -58,7 +58,7 @@ fun Double.formatWith2DecimalPlaces(): String {
 }
 
 fun Number?.formatToPercentage(): String {
-    return if(this != null) String.format( "%.2f",this) else ""
+    return if(this != null) String.format( "%.2f",this.toDouble()) + "%" else ""
 }
 
 fun Number?.formatDecimals() : String {

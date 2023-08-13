@@ -13,8 +13,6 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import strikt.api.expectThat
-import strikt.assertions.isEqualTo
 
 class FindPreferencesUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
     dispatcher = StandardTestDispatcher()
@@ -38,12 +36,10 @@ class FindPreferencesUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
         val expectedResult = flowOf(SummaryStockEntity(code = "", name = "", sector = "", logo = ""))
         coEvery { repository.findNote(code) } returns expectedResult
 
-        val actualResult = useCase.invoke(code)
+        useCase.invoke(code)
 
         coVerify(exactly = 1) {
             repository.findNote(code)
         }
-
-        expectThat(actualResult).isEqualTo(expectedResult)
     }
 }

@@ -31,6 +31,7 @@ import com.sugarspoon.design_system.topbar.TopBar
 import com.sugarspoon.pocketstocks.ui.details.DetailsActivity.Companion.getDetailsActivityIntent
 import com.sugarspoon.pocketstocks.ui.home.HomeUiState
 import com.sugarspoon.pocketstocks.ui.home.HomeViewModel
+import com.sugarspoon.pocketstocks.utils.formatToPercentage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,6 +104,7 @@ fun AnalyzeScreen(
                                 name = stock.name,
                                 code = stock.stock,
                                 sector = stock.sector,
+                                change = stock.change.formatToPercentage(),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .inlineSpacingSmall()
@@ -158,6 +160,7 @@ fun AnalyzeScreen(
                                 name = stock.name,
                                 code = stock.stock,
                                 sector = stock.sector,
+                                change = stock.change.formatToPercentage(),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .inlineSpacingSmall()
@@ -211,6 +214,7 @@ fun AnalyzeScreen(
                                 name = stock.name,
                                 code = stock.stock,
                                 sector = stock.sector,
+                                change = stock.change.formatToPercentage(),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .inlineSpacingSmall()

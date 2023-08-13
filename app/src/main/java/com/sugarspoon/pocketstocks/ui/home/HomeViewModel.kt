@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
-import com.sugarspoon.domain.usecase.remote.FetchQuoteListUseCase
+import com.sugarspoon.domain.usecase.remote.FetchApiDataUseCase
 import com.sugarspoon.pocketstocks.base.BaseViewModelMVI
 import com.sugarspoon.pocketstocks.ui.mappers.UiMapper
 import java.net.UnknownHostException
@@ -14,7 +14,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class HomeViewModel @Inject constructor(
-    private val fetchQuoteListUseCase: FetchQuoteListUseCase,
+    private val fetchApiDataUseCase: FetchApiDataUseCase,
     private val uiMapper: UiMapper
 ) : BaseViewModelMVI<HomeUiState>(HomeUiState()) {
 
@@ -40,12 +40,12 @@ class HomeViewModel @Inject constructor(
         }.await()
         createNewState(
             newState = currentState.value.copy(
-//                topFIIStocks = stocks.filter {
-//                    it.name.contains("FII ")
-//                }.sortedByDescending { it.change.toDouble() }.take(5),
+                topFIIStocks = stocks.filter {
+                    it.name.contains("FII ")
+                }.sortedByDescending { it.change.toDouble() }.take(5),
                 topStocks = topStocks,
-//                marketCap = stocks.sortedByDescending { it.marketCap.toDouble() }
-//                    .take(5)
+                marketCap = stocks.sortedByDescending { it.marketCap.toDouble() }
+                    .take(5)
             )
         )
     }
@@ -105,7 +105,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun fetchApiData() = viewModelScope.launch {
-        fetchQuoteListUseCase.invoke()
+        fetchApiDataUseCase.invoke()
             .onSuccess { response ->
                 val stocks = uiMapper.mapStockList(response.responseDto)
                 createNewState(
