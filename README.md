@@ -24,6 +24,7 @@ https://brapi.dev/
 - Testes (Mockk)
 - Injeção de dependências (Hilt)
 - Dados Reativos (Kotlin Flow)
+- Peristência de Dados (Room)
 
 ## Próximos passos
 - Incluir tela de listagem de CriptoMoedas
