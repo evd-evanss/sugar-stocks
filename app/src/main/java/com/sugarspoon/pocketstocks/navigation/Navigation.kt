@@ -3,32 +3,35 @@ package com.sugarspoon.pocketstocks.navigation
 import androidx.compose.foundation.layout.Column
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.sugarspoon.pocketstocks.ui.home.HomeScreen
-import com.sugarspoon.pocketstocks.ui.main.UiState
-import com.sugarspoon.pocketstocks.ui.main.MainViewModel
+import com.sugarspoon.pocketstocks.di.ViewModelInjector
 import com.sugarspoon.pocketstocks.ui.analyze.AnalyzeScreen
-import com.sugarspoon.pocketstocks.ui.list.MyListScreen
+import com.sugarspoon.pocketstocks.ui.home.HomeScreen
+import com.sugarspoon.pocketstocks.ui.home.HomeUiState
+import com.sugarspoon.pocketstocks.ui.preferences.StockPreferencesScreen
+import com.sugarspoon.pocketstocks.ui.preferences.PreferencesUiState
 
 fun NavGraphBuilder.navigation(
-    viewModel: MainViewModel,
-    stateStockScreen: UiState
+    viewModels: ViewModelInjector,
+    homeUiState: HomeUiState,
+    onFinish: () -> Unit
 ) {
     composable(route = Screens.Home.name) {
         HomeScreen(
-            viewModel = viewModel,
-            uiState = stateStockScreen
+            viewModel = viewModels.homeViewModel,
+            onFinish = onFinish,
+            uiState = homeUiState
         )
     }
     composable(route = Screens.Analysis.name) {
         AnalyzeScreen(
-            viewModel = viewModel,
-            stateStockScreen = stateStockScreen
+            viewModel = viewModels.homeViewModel,
+            uiState = homeUiState
         )
     }
     composable(route = Screens.Wallet.name) {
         Column {
-            MyListScreen(
-                viewModel = viewModel,
+            StockPreferencesScreen(
+                viewModel = viewModels.stockPreferencesViewModel,
             )
         }
     }

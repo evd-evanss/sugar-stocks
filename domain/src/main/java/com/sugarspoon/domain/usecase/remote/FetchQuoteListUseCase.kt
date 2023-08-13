@@ -7,5 +7,5 @@ class FetchQuoteListUseCase @Inject constructor(
     private val repository: ApiRepository
 ) {
 
-    fun invoke() = repository.getQuoteList()
+    suspend fun invoke() = repository.getApiData()
 }

@@ -24,15 +24,15 @@ class BrapiDataSource @Inject constructor() {
 
     suspend fun getDetails(
          tickers: String,
-         range: String,
-         interval: String,
+         range: String = "",
+         interval: String = "",
     ) = serviceProd.getDetails(tickers, range, interval)
 
     suspend fun getInflation(
         country: String,
-        historical: Boolean,
-        start: String,
-        end: String
+        historical: Boolean = false,
+        start: String = "",
+        end: String = ""
     ) = serviceProd.getInflation(
         country,
         historical,

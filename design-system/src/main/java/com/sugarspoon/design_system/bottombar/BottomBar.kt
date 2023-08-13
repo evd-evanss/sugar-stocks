@@ -24,26 +24,28 @@ import com.sugarspoon.design_system.Dimensions.None
 @Composable
 fun BottomBar(
     modifier: Modifier,
+    isVisible: Boolean = true,
     content: @Composable RowScope.() -> Unit,
 ) {
-    Column(modifier = modifier
-        .clickable(enabled = false) {}
-        .clip(RoundedCornerShape(PillRadius))
-        .background(MaterialTheme.colorScheme.background)
-        .fillMaxWidth()) {
-        Divider()
-        Row(
-            modifier = modifier
-                .height(BottomBarHeight)
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            content(this)
+    if(isVisible) {
+        Column(modifier = modifier
+            .clickable(enabled = false) {}
+            .clip(RoundedCornerShape(PillRadius))
+            .background(MaterialTheme.colorScheme.background)
+            .fillMaxWidth()) {
+            Divider()
+            Row(
+                modifier = modifier
+                    .height(BottomBarHeight)
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                content(this)
+            }
         }
     }
-
 }
 
 private val BottomBarHeight = 60.dp

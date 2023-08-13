@@ -1,8 +1,5 @@
 package com.sugarspoon.pocketstocks.ui.analyze
 
-
-import android.content.Intent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sugarspoon.design_system.Dimensions
 import com.sugarspoon.design_system.Dimensions.bottomSpacing
@@ -30,32 +26,33 @@ import com.sugarspoon.design_system.Dimensions.inlineSpacingSmall
 import com.sugarspoon.design_system.Dimensions.topSpacing
 import com.sugarspoon.design_system.Dimensions.topSpacingVerySmall
 import com.sugarspoon.design_system.lists.SugarLists
-import com.sugarspoon.design_system.overlay.Modal
-import com.sugarspoon.design_system.overlay.rememberOverlayState
 import com.sugarspoon.design_system.text.SugarText
 import com.sugarspoon.design_system.topbar.TopBar
-import com.sugarspoon.pocketstocks.ui.details.DetailsActivity
-import com.sugarspoon.pocketstocks.ui.main.UiState
-import com.sugarspoon.pocketstocks.ui.main.MainViewModel
+import com.sugarspoon.pocketstocks.ui.details.DetailsActivity.Companion.getDetailsActivityIntent
+import com.sugarspoon.pocketstocks.ui.home.HomeUiState
+import com.sugarspoon.pocketstocks.ui.home.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalyzeScreen(
-    viewModel: MainViewModel,
-    stateStockScreen: UiState
+    viewModel: HomeViewModel,
+    uiState: HomeUiState
 ) {
     val context = LocalContext.current
-    LaunchedEffect(stateStockScreen.code) {
-        if (stateStockScreen.code.isNotEmpty() && stateStockScreen.logo.isNotEmpty()) {
-            val intent = Intent(context, DetailsActivity::class.java)
-            intent.putExtra("code", stateStockScreen.code)
-            intent.putExtra("logo", stateStockScreen.logo)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            context.startActivity(intent)
+    LaunchedEffect(true) {
+        viewModel.getAnalyzeData()
+    }
+    LaunchedEffect(uiState.code) {
+        if (uiState.code.isNotEmpty() && uiState.logo.isNotEmpty()) {
+            context.startActivity(
+                context.getDetailsActivityIntent(
+                    code = uiState.code,
+                    logo = uiState.logo
+                )
+            )
             viewModel.clearParams()
         }
     }
-    val modalState = rememberOverlayState()
     Column {
         TopBar(
             title = "Análises - B3 e BDRs",
@@ -81,12 +78,12 @@ fun AnalyzeScreen(
                 contentPadding = PaddingValues(horizontal = Dimensions.SpacingSmall)
             ) {
                 items(
-                    count = stateStockScreen.topStocks.size,
+                    count = uiState.topStocks.size,
                     key = {
-                        stateStockScreen.topStocks[it].stock ?: 0
+                        uiState.topStocks[it].stock
                     },
                     itemContent = { index ->
-                        val stock = stateStockScreen.topStocks[index]
+                        val stock = uiState.topStocks[index]
                         Column {
                             Badge(
                                 modifier = Modifier
@@ -102,10 +99,10 @@ fun AnalyzeScreen(
                             }
 
                             SugarLists.TopStockItem(
-                                logo = stock.logo.orEmpty(),
-                                name = stock.name.orEmpty(),
-                                code = stock.stock.orEmpty(),
-                                sector = stock.sector.orEmpty(),
+                                logo = stock.logo,
+                                name = stock.name,
+                                code = stock.stock,
+                                sector = stock.sector,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .inlineSpacingSmall()
@@ -136,12 +133,12 @@ fun AnalyzeScreen(
                 contentPadding = PaddingValues(horizontal = Dimensions.SpacingSmall)
             ) {
                 items(
-                    count = stateStockScreen.topFIIStocks.size,
+                    count = uiState.topFIIStocks.size,
                     key = {
-                        stateStockScreen.topFIIStocks[it].stock ?: 0
+                        uiState.topFIIStocks[it].stock
                     },
                     itemContent = { index ->
-                        val stock = stateStockScreen.topFIIStocks[index]
+                        val stock = uiState.topFIIStocks[index]
                         Column {
                             Badge(
                                 modifier = Modifier
@@ -157,10 +154,10 @@ fun AnalyzeScreen(
                             }
 
                             SugarLists.TopStockItem(
-                                logo = stock.logo.orEmpty(),
-                                name = stock.name.orEmpty(),
-                                code = stock.stock.orEmpty(),
-                                sector = stock.sector.orEmpty(),
+                                logo = stock.logo,
+                                name = stock.name,
+                                code = stock.stock,
+                                sector = stock.sector,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .inlineSpacingSmall()
@@ -189,12 +186,12 @@ fun AnalyzeScreen(
                 contentPadding = PaddingValues(horizontal = Dimensions.SpacingSmall)
             ) {
                 items(
-                    count = stateStockScreen.marketCap.size,
+                    count = uiState.marketCap.size,
                     key = {
-                        stateStockScreen.marketCap[it].stock ?: 0
+                        uiState.marketCap[it].stock
                     },
                     itemContent = { index ->
-                        val stock = stateStockScreen.marketCap[index]
+                        val stock = uiState.marketCap[index]
                         Column {
                             Badge(
                                 modifier = Modifier
@@ -210,10 +207,10 @@ fun AnalyzeScreen(
                             }
 
                             SugarLists.TopStockItem(
-                                logo = stock.logo.orEmpty(),
-                                name = stock.name.orEmpty(),
-                                code = stock.stock.orEmpty(),
-                                sector = stock.sector.orEmpty(),
+                                logo = stock.logo,
+                                name = stock.name,
+                                code = stock.stock,
+                                sector = stock.sector,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .inlineSpacingSmall()
@@ -226,32 +223,6 @@ fun AnalyzeScreen(
                 )
             }
             Spacer(modifier = Modifier.height(80.dp))
-        }
-    }
-    modalState.handleVisibility(stateStockScreen.openModal)
-
-    Modal(state = modalState, onDismissListener = {}) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-        ) {
-            SugarText(
-                text = stateStockScreen.error ?: "Falha na request",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .inlineSpacingMedium(),
-                textAlign = TextAlign.Left,
-                style = MaterialTheme.typography.titleMedium
-            )
-            SugarText(
-                text = stateStockScreen.error,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .inlineSpacingMedium(),
-                textAlign = TextAlign.Left,
-                style = MaterialTheme.typography.titleMedium
-            )
         }
     }
 }

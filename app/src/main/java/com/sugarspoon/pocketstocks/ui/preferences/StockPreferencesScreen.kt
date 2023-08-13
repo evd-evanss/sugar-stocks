@@ -1,6 +1,5 @@
-package com.sugarspoon.pocketstocks.ui.list
+package com.sugarspoon.pocketstocks.ui.preferences
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,18 +26,17 @@ import com.sugarspoon.design_system.Dimensions.inlineSpacingMedium
 import com.sugarspoon.design_system.Dimensions.topSpacing
 import com.sugarspoon.design_system.Dimensions.topSpacingSmall
 import com.sugarspoon.design_system.Dimensions.topSpacingVerySmall
+import com.sugarspoon.design_system.icons.SugarSpoonIcons
 import com.sugarspoon.design_system.lists.SugarLists
 import com.sugarspoon.design_system.lists.skeleton
 import com.sugarspoon.design_system.text.SugarText
 import com.sugarspoon.design_system.topbar.TopBar
-import com.sugarspoon.design_system.icons.SugarSpoonIcons
-import com.sugarspoon.pocketstocks.ui.details.DetailsActivity
-import com.sugarspoon.pocketstocks.ui.main.MainViewModel
+import com.sugarspoon.pocketstocks.ui.details.DetailsActivity.Companion.getDetailsActivityIntent
 import kotlinx.coroutines.launch
 
 @Composable
-fun MyListScreen(
-    viewModel: MainViewModel
+fun StockPreferencesScreen(
+    viewModel: StockPreferencesViewModel
 ) {
     val uiState = viewModel.uiState.invoke()
     LaunchedEffect(uiState.stockPreferences.size) {
@@ -49,11 +47,12 @@ fun MyListScreen(
     val context = LocalContext.current
     LaunchedEffect(uiState.code) {
         if (uiState.code.isNotEmpty() && uiState.logo.isNotEmpty()) {
-            val intent = Intent(context, DetailsActivity::class.java)
-            intent.putExtra("code", uiState.code)
-            intent.putExtra("logo", uiState.logo)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-            context.startActivity(intent)
+            context.startActivity(
+                context.getDetailsActivityIntent(
+                    code = uiState.code,
+                    logo = uiState.logo
+                )
+            )
             viewModel.clearParams()
         }
     }
@@ -97,7 +96,7 @@ fun MyListScreen(
                     .fillMaxWidth(),
                 userScrollEnabled = true
             ) {
-                if (uiState.detailsLoading) {
+                if (uiState.isLoading) {
                     items(
                         count = 10,
                         itemContent = { index ->

@@ -10,7 +10,11 @@ import java.util.TimeZone
 fun String.getDateTime(): String {
     return if(this.isEmpty()) this
     else try {
-        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val formatter = if(this.length == 22) {
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        } else {
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        }
         formatter.timeZone = TimeZone.getTimeZone("UTC")
         val value = formatter.parse(this)
         val dateFormatter = SimpleDateFormat("dd/MM/yyyy - hh:mm a", Locale.getDefault())
@@ -55,4 +59,8 @@ fun Double.formatWith2DecimalPlaces(): String {
 
 fun Number?.formatToPercentage(): String {
     return if(this != null) String.format( "%.2f",this) else ""
+}
+
+fun Number?.formatDecimals() : String {
+    return NumberFormat.getNumberInstance(Locale.getDefault()).format(this ?: 0)
 }

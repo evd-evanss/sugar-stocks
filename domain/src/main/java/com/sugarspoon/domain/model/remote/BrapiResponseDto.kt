@@ -7,6 +7,13 @@ data class BrapiResponseDto(
     val stocks: List<StockDto>
 )
 
+data class ApiDataDto(
+    val responseDto: BrapiResponseDto,
+    val inflationResponseDTO: InflationResponseDTO,
+    val marketStatusDto: MarketStatusDto,
+    val quotesResponseDto: QuotesResponseDto
+)
+
 data class QuotesResponseDto(
     val requestedAt: String,
     val results: List<StockDetailDto>,

@@ -13,6 +13,11 @@ import com.sugarspoon.pocketstocks.models.MarketStatus
 import com.sugarspoon.pocketstocks.models.Stock
 import com.sugarspoon.pocketstocks.models.StockDetail
 import com.sugarspoon.pocketstocks.models.SummaryStock
+import com.sugarspoon.pocketstocks.utils.addCurrencySuffix
+import com.sugarspoon.pocketstocks.utils.asCurrency
+import com.sugarspoon.pocketstocks.utils.formatDecimals
+import com.sugarspoon.pocketstocks.utils.getDateTime
+import java.util.Locale
 import javax.inject.Inject
 
 class UiMapper @Inject constructor() {
@@ -20,8 +25,8 @@ class UiMapper @Inject constructor() {
     fun mapToStockDetail(
         response: StockDetailDto
     ) = StockDetail(
-        averageDailyVolume10Day = response.averageDailyVolume10Day ?: 0,
-        averageDailyVolume3Month = response.averageDailyVolume3Month ?: 0,
+        averageDailyVolume10Day = response.averageDailyVolume10Day?.formatDecimals() ?: "0",
+        averageDailyVolume3Month = response.averageDailyVolume3Month?.formatDecimals() ?: "0",
         currency = response.currency.orEmpty(),
         fiftyTwoWeekHigh = response.fiftyTwoWeekHigh ?: 0,
         fiftyTwoWeekHighChange = response.fiftyTwoWeekHighChange ?: 0,
@@ -31,16 +36,26 @@ class UiMapper @Inject constructor() {
         fiftyTwoWeekLowChangePercent = response.fiftyTwoWeekLowChangePercent ?: 0,
         fiftyTwoWeekRange = response.fiftyTwoWeekRange.orEmpty(),
         longName = response.longName.orEmpty(),
-        marketCap = response.marketCap ?: 0,
-        regularMarketChange = response.regularMarketChange ?: 0,
-        regularMarketChangePercent = response.regularMarketChangePercent ?: 0,
+        marketCap = response.marketCap?.asCurrency()?.addCurrencySuffix() ?: "0",
+        marketCapNumber = response.marketCap ?: 0,
+        regularMarketChange = String.format(
+            locale = Locale.getDefault(),
+            "%.2f",
+            response.regularMarketChange?.toDouble()
+        ),
+        regularMarketChangeNumber = response.regularMarketChange?.toDouble() ?: 0.0,
+        regularMarketChangePercent = String.format(
+            locale = Locale.getDefault(),
+            "%.2f",
+            response.regularMarketChangePercent?.toDouble()
+        ),
         regularMarketDayHigh = response.regularMarketDayHigh ?: 0,
         regularMarketDayLow = response.regularMarketDayLow ?: 0,
         regularMarketDayRange = response.regularMarketDayRange.orEmpty(),
         regularMarketOpen = response.regularMarketOpen ?: 0,
         regularMarketPreviousClose = response.regularMarketPreviousClose ?: 0,
-        regularMarketPrice = response.regularMarketPrice ?: 0,
-        regularMarketTime = response.regularMarketTime.orEmpty(),
+        regularMarketPrice = response.regularMarketPrice?.toDouble().formatDecimals(),
+        regularMarketTime = response.regularMarketTime.orEmpty().getDateTime(),
         regularMarketVolume = response.regularMarketVolume ?: 0,
         shortName = response.shortName.orEmpty(),
         symbol = response.symbol.orEmpty(),

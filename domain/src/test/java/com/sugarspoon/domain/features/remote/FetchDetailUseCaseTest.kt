@@ -8,7 +8,6 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -34,7 +33,7 @@ class FetchDetailUseCaseTest : BaseCoroutineTestWithTestDispatcherProvider(
 
     @Test
     fun `invoke calls getDetail method of repository`() = runTest {
-        val expectedResult = flowOf(QuotesResponseDto("", listOf()))
+        val expectedResult = Result.success(QuotesResponseDto("", listOf()))
         coEvery { repository.getDetail(tickers = "PETR4") } returns expectedResult
 
         val actualResult = useCase.invoke("PETR4")
